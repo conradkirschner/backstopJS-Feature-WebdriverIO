@@ -1,5 +1,13 @@
-//const Chromy = require('chromy');
-// const writeFileSync = require('fs').writeFileSync;
+/*
+ENGINE
+WEBDRIVER IO
+VERSION 0.1
+ */
+var webdriverio = require('webdriverio');
+var Launcher = require('webdriverio').Launcher;
+
+
+const writeFileSync = require('fs').writeFileSync;
 const fs = require('./fs');
 const path = require('path');
 const ensureDirectoryPath = require('./ensureDirectoryPath');
@@ -236,7 +244,15 @@ function processScenarioView(scenario, variantOrScenarioLabelSafe, scenarioLabel
   if (!scenario.hasOwnProperty('selectors') || !scenario.selectors.length) {
     scenario.selectors = [DOCUMENT_SELECTOR];
   }
+  /*
+  Load here settings from backstop.json and port them to a wdio.conf.js
+  Or
+  use custom wdio.conf.js file
+   */
+  var options = { desiredCapabilities: { browserName: 'chrome'},test:'t'};
+  var wdio = new Launcher("./wdio.conf.js", options);
 
+  return wdio.run().then(()=>{
   return new Promise((resolve, reject) => {
     resolve(delegateSelectors(
       null,
@@ -248,7 +264,8 @@ function processScenarioView(scenario, variantOrScenarioLabelSafe, scenarioLabel
       "",
       ""
     ));
-  });
+  });}
+);
 }
 
 // vvv HELPERS vvv
@@ -262,6 +279,8 @@ function processScenarioView(scenario, variantOrScenarioLabelSafe, scenarioLabel
  * @return {[type]}                            [description]
  */
 function delegateSelectors(chromy, scenario, viewport, variantOrScenarioLabelSafe, scenarioLabelSafe, config, selectors, selectorMap) {
+
+
   const fileNameTemplate = config.fileNameTemplate || DEFAULT_FILENAME_TEMPLATE;
   const configId = config.id || engineTools.genHash(config.backstopConfigFileName); //#0001
   const bitmapsTestPath = config.paths.bitmaps_test || DEFAULT_BITMAPS_TEST_DIR;
@@ -275,11 +294,8 @@ function delegateSelectors(chromy, scenario, viewport, variantOrScenarioLabelSaf
   let captureJobs = [];
 
 
-  if (captureDocument) {
-    captureJobs.push(function () {
-      console.log("finished1")
-    });
-  }
+
+
   // TODO: push captureViewport into captureList (instead of calling captureScreenshot()) to improve perf.
   if (captureViewport) {
     captureJobs.push(function () {
@@ -293,11 +309,13 @@ function delegateSelectors(chromy, scenario, viewport, variantOrScenarioLabelSaf
   }
 
   return new Promise(function (resolve, reject) {
+
     var job = null;
     var errors = [];
     var next = function () {
       if (captureJobs.length === 0) {
         if (errors.length === 0) {
+
           resolve();
         } else {
           reject(errors);
@@ -337,3 +355,15 @@ function delegateSelectors(chromy, scenario, viewport, variantOrScenarioLabelSaf
  * @param  {[type]} config   [description]
  * @return {[type]}          [description]
  */
+
+/**
+ * [FileGetter]
+ * @param  TODO add param
+ */
+function getCurrentFileSet() {
+  var cleanedSelectorName = o.replace(/[^a-z0-9_-]/gi, ''); // remove anything that's not a letter or a number
+  var fileName = getFilename(scenario.sIndex, scenarioOrVariantLabel, i, cleanedSelectorName, viewportIndex, vp.label);
+  var referenceFilePath = bitmapsReferencePath + '/' + getFilename(scenario.sIndex, scenarioLabel, i, cleanedSelectorName, viewportIndex, vp.label);
+  var testFilePath = bitmapsTestPath + '/' + screenshotDateTime + '/' + fileName;
+  var filePath = (isReference) ? referenceFilePath : testFilePath;
+}
