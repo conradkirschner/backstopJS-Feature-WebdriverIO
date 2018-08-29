@@ -8,6 +8,7 @@ var pMap = require('p-map');
 var runCasper = require('./runCasper');
 var runChromy = require('./runChromy');
 var runPuppet = require('./runPuppet');
+var runWebdriverIO = require('./runWebdriverIO');
 
 const ensureDirectoryPath = require('./ensureDirectoryPath');
 var logger = require('./logger')('createBitmaps');
@@ -144,7 +145,9 @@ function delegateScenarios (config) {
     });
   } else if (config.engine.startsWith('puppet')) {
     return pMap(scenarioViews, runPuppet, {concurrency: asyncCaptureLimit});
-  } else {
+  } else if (config.engine.startsWith('webdriverio')) {
+    return pMap(scenarioViews, runWebdriverIO, {concurrency: asyncCaptureLimit});
+  }  else {
     logger.error('Engine not known to Backstop!');
   }
 }
@@ -192,10 +195,16 @@ function flatMapTestPairs (rawTestPairs) {
 }
 
 module.exports = function (config, isReference) {
-  if (/chrom./i.test(config.engine) || /puppet/i.test(config.engine)) {
+  console.log('###NOW WE ARE IN THE WEBDRIVERIO FILE ###');
+
+  if (/chrom./i.test(config.engine) || /puppet/i.test(config.engine)|| /webdriverio/i.test(config.engine)) {
     const promise = delegateScenarios(decorateConfigForCapture(config, isReference))
       .then(rawTestPairs => {
-        const result = {
+       const test = JSON.parse("[{\"testPairs\":[{\"reference\":\"backstop_data/bitmaps_reference/backstop_default_BackstopJS_Homepage_ _document_0_phone.png\",\"test\":\"backstop_data/bitmaps_test/20180829-181941/backstop_default_BackstopJS_Homepage_0_document_0_phone.png\",\"selector\":\"document\",\"fileName\":\"backstop_default_BackstopJS_Homepage_0_document_0_phone.png\",\"label\":\"BackstopJS Homepage\",\"requireSameDimensions\":true,\"misMatchThreshold\":0.1,\"url\":\"https://garris.github.io/BackstopJS/\",\"referenceUrl\":\"\",\"expect\":0,\"viewportLabel\":\"phone\"}]},{\"testPairs\":[{\"reference\":\"backstop_data/bitmaps_reference/backstop_default_BackstopJS_Homepage_0_document_1_tablet.png\",\"test\":\"backstop_data/bitmaps_test/20180829-181941/backstop_default_BackstopJS_Homepage_0_document_1_tablet.png\",\"selector\":\"document\",\"fileName\":\"backstop_default_BackstopJS_Homepage_0_document_1_tablet.png\",\"label\":\"BackstopJS Homepage\",\"requireSameDimensions\":true,\"misMatchThreshold\":0.1,\"url\":\"https://garris.github.io/BackstopJS/\",\"referenceUrl\":\"\",\"expect\":0,\"viewportLabel\":\"tablet\"}]}]\n");
+        console.log(JSON.stringify(test));
+        console.log('###############dsfdsf------------------------');
+        console.log(JSON.stringify(rawTestPairs));
+       const result = {
           compareConfig: {
             testPairs: flatMapTestPairs(rawTestPairs)
           }
