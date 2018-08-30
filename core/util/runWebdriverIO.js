@@ -252,7 +252,13 @@ function processScenarioView(scenario, variantOrScenarioLabelSafe, scenarioLabel
   var options = { desiredCapabilities: { browserName: 'chrome'},test:'t'};
   var wdio = new Launcher("./wdio.conf.js", options);
 
-  return wdio.run().then(()=>{
+  /*
+  *
+  * TODO find a better way than a json file to comunicate
+  *
+  * */
+  return wdio.run().then((e)=>{
+    console.log('JSON ',JSON.stringify(e));
   return new Promise((resolve, reject) => {
     resolve(delegateSelectors(
       null,
