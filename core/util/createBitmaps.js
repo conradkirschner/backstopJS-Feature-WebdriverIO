@@ -195,13 +195,12 @@ function flatMapTestPairs (rawTestPairs) {
 }
 
 module.exports = function (config, isReference) {
-  console.log('###NOW WE ARE IN THE WEBDRIVERIO FILE ###');
-
+  console.log('###NOW WE ARE IN THE WEBDRIVERIO FILE ###\n Used Engine: ' + config.engine);
   if (/chrom./i.test(config.engine) || /puppet/i.test(config.engine)|| /webdriverio/i.test(config.engine)) {
     const promise = delegateScenarios(decorateConfigForCapture(config, isReference))
       .then(rawTestPairs => {
        const test = JSON.parse("[{\"testPairs\":[{\"reference\":\"backstop_data/bitmaps_reference/backstop_default_BackstopJS_Homepage_ _document_0_phone.png\",\"test\":\"backstop_data/bitmaps_test/20180829-181941/backstop_default_BackstopJS_Homepage_0_document_0_phone.png\",\"selector\":\"document\",\"fileName\":\"backstop_default_BackstopJS_Homepage_0_document_0_phone.png\",\"label\":\"BackstopJS Homepage\",\"requireSameDimensions\":true,\"misMatchThreshold\":0.1,\"url\":\"https://garris.github.io/BackstopJS/\",\"referenceUrl\":\"\",\"expect\":0,\"viewportLabel\":\"phone\"}]},{\"testPairs\":[{\"reference\":\"backstop_data/bitmaps_reference/backstop_default_BackstopJS_Homepage_0_document_1_tablet.png\",\"test\":\"backstop_data/bitmaps_test/20180829-181941/backstop_default_BackstopJS_Homepage_0_document_1_tablet.png\",\"selector\":\"document\",\"fileName\":\"backstop_default_BackstopJS_Homepage_0_document_1_tablet.png\",\"label\":\"BackstopJS Homepage\",\"requireSameDimensions\":true,\"misMatchThreshold\":0.1,\"url\":\"https://garris.github.io/BackstopJS/\",\"referenceUrl\":\"\",\"expect\":0,\"viewportLabel\":\"tablet\"}]}]\n");
-        console.log(JSON.stringify(test));
+        console.log(JSON.stringify(rawTestPairs));
         console.log('###############dsfdsf------------------------');
         console.log(JSON.stringify(rawTestPairs));
        const result = {

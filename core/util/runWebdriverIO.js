@@ -249,7 +249,7 @@ function processScenarioView(scenario, variantOrScenarioLabelSafe, scenarioLabel
   Or
   use custom wdio.conf.js file
    */
-  var options = { desiredCapabilities: { browserName: 'chrome'},test:'t'};
+  var options = {desiredCapabilities: {browserName: 'chrome'}, test: 't'};
   var wdio = new Launcher("./wdio.conf.js", options);
 
   /*
@@ -257,21 +257,21 @@ function processScenarioView(scenario, variantOrScenarioLabelSafe, scenarioLabel
   * TODO find a better way than a json file to comunicate
   *
   * */
-  return wdio.run().then((e)=>{
-    console.log('JSON ',JSON.stringify(e));
-  return new Promise((resolve, reject) => {
-    resolve(delegateSelectors(
-      null,
-      scenario,
-      viewport,
-      variantOrScenarioLabelSafe,
-      scenarioLabelSafe,
-      config,
-      "",
-      ""
-    ));
-  });}
-);
+  return wdio.run().then((e) => {
+    console.log('JSON ', JSON.stringify(e));
+    return new Promise((resolve, reject) => {
+      resolve(delegateSelectors(
+        null,
+        scenario,
+        viewport,
+        variantOrScenarioLabelSafe,
+        scenarioLabelSafe,
+        config,
+        "",
+        ""
+      ));
+    })
+  });
 }
 
 // vvv HELPERS vvv
@@ -298,8 +298,6 @@ function delegateSelectors(chromy, scenario, viewport, variantOrScenarioLabelSaf
   let captureViewport = false;
   let captureList = [];
   let captureJobs = [];
-
-
 
 
   // TODO: push captureViewport into captureList (instead of calling captureScreenshot()) to improve perf.
@@ -349,6 +347,32 @@ function delegateSelectors(chromy, scenario, viewport, variantOrScenarioLabelSaf
      *  =============
      */
   }).then(_ => {
+    /*
+    TODO Add return json
+
+    {
+      testPairs:
+      [
+        {
+          reference,
+          test,
+          selector,
+          fileName,
+          label,
+          requireSameDimensions,
+          missMatchThreshold,
+          url,
+          referenceUrl,
+          expect,
+          viewportLabel
+         }
+      ]
+    }
+     */
+    var json = require('./../../myjsonfile1.json');
+    console.log(JSON.stringify(json));
+    console.log('JSON.stringify(json)');
+    return json;
     return JSON.parse("{\"testPairs\":[{\"reference\":\"backstop_data/bitmaps_reference/backstop_default_BackstopJS_Homepage_0_document_0_phone.png\",\"test\":\"backstop_data/bitmaps_test/20180829-191723/backstop_default_BackstopJS_Homepage_0_document_0_phone.png\",\"selector\":\"document\",\"fileName\":\"backstop_default_BackstopJS_Homepage_0_document_0_phone.png\",\"label\":\"BackstopJS Homepage\",\"requireSameDimensions\":true,\"misMatchThreshold\":0.1,\"url\":\"https://garris.github.io/BackstopJS/\",\"referenceUrl\":\"\",\"expect\":0,\"viewportLabel\":\"phone\"}]}\n")
   });
 }
