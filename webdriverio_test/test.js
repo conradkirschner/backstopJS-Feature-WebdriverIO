@@ -6,7 +6,7 @@ describe('my awesome website', function() {
     console.log('#'+browser.options.test);
     browser.options.test='works';
     browser.url('http://webdriver.io');
-    browser.saveViewportScreenshot('test.png');
+  //browser.click();
 
   });
 });

@@ -202,6 +202,10 @@ exports.config = {
      * @param {Array.<String>} specs List of spec file paths that are to be run
      */
     before: function (capabilities, specs) {
+      //todo add cookie loader if exist
+      //init backstopjs object
+      browser.backstopjs =  JSON.parse("{\"testPairs\":[{\"reference\":\"backstop_data/bitmaps_reference/backstop_default_BackstopJS_Homepage_0_document_0_phone.png\",\"test\":\"backstop_data/bitmaps_test/20180829-191723/backstop_default_BackstopJS_Homepage_0_document_0_phone.png\",\"selector\":\"document\",\"fileName\":\"backstop_default_BackstopJS_Homepage_0_document_0_phone.png\",\"label\":\"BackstopJS Homepage\",\"requireSameDimensions\":true,\"misMatchThreshold\":0.1,\"url\":\"https://garris.github.io/BackstopJS/\",\"referenceUrl\":\"\",\"expect\":0,\"viewportLabel\":\"phone\"}]}\n");
+
     },
     /**
      * Hook that gets executed before the suite starts
@@ -244,9 +248,16 @@ exports.config = {
      */
     afterCommand: function (commandName, args, result, error) {
       //TODO Add here function to execute screenshot
-      if(commandName == ''){
-        browser.url('http://webdriver.io');
+      switch(commandName){
+        case 'url':
+          browser.saveViewportScreenshot('tes123t.png');
+          break;
+        case 'CLICK':
+          browser.saveViewportScreenshot('tes123t.png');
+          break;
+        case 'HOVER':
         browser.saveViewportScreenshot('tes123t.png');
+        break;
       }
       // this is  for click / touch / key events (if enabled)
     },
@@ -271,8 +282,9 @@ exports.config = {
      * @param {Array.<String>} specs List of spec file paths that ran
      */
     after: function (result, capabilities, specs) {
+      // Write results to json
       var fs = require('fs');
-      fs.writeFile('myjsonfile1.json', JSON.stringify(result), 'utf8');
+      fs.writeFile('myjsonfile1.json', JSON.stringify(browser.backstopjs ), 'utf8',function(){console.log("saved testresults")});
 
       return result;
     },
