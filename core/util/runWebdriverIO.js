@@ -51,13 +51,20 @@ module.exports = function (args) {
 function processScenarioView(scenario, variantOrScenarioLabelSafe, scenarioLabelSafe, viewport, config, runId, assignedPort) {
   /**
    *  =============
+   *  WebdriverIO options
+   *  =============
+   */
+  var options = {desiredCapabilities: {browserName: 'chrome'},scenario:scenario,variantOrScenarioLabelSafe:variantOrScenarioLabelSafe,scenarioLabelSafe:scenarioLabelSafe,viewport:viewport,config:config,runId:runId,assignedPort:assignedPort}; //required
+  config.runId =runId;
+  /**
+   *  =============
    *  Path Empty fallback
    *  =============
    */
   console.log('#####123##############');
 
   if (!config.paths) {
-    config.paths = {};
+    options.config.paths = {};
   }
 
   /**
@@ -67,7 +74,7 @@ function processScenarioView(scenario, variantOrScenarioLabelSafe, scenarioLabel
    */
 
   if (typeof viewport.label !== 'string') {
-    viewport.label = viewport.name || '';
+    options.viewport.label = viewport.name || '';
   }
 
   const isReference = config.isReference;
@@ -249,7 +256,6 @@ function processScenarioView(scenario, variantOrScenarioLabelSafe, scenarioLabel
   Or
   use custom wdio.conf.js file
    */
-  var options = {desiredCapabilities: {browserName: 'chrome'}, test: 't'};
   var wdio = new Launcher("./wdio.conf.js", options);
 
   /*
@@ -369,11 +375,11 @@ function delegateSelectors(chromy, scenario, viewport, variantOrScenarioLabelSaf
       ]
     }
      */
-    var json = require('./../../myjsonfile1.json');
+    var json = require('./../../myjsonfile1.'+config.runId+'.json');
+   // fs.unlink('./myjsonfile1.'+config.runId+'.json');
     console.log(JSON.stringify(json));
     console.log('JSON.stringify(json)');
     return json;
-    return JSON.parse("{\"testPairs\":[{\"reference\":\"backstop_data/bitmaps_reference/backstop_default_BackstopJS_Homepage_0_document_0_phone.png\",\"test\":\"backstop_data/bitmaps_test/20180829-191723/backstop_default_BackstopJS_Homepage_0_document_0_phone.png\",\"selector\":\"document\",\"fileName\":\"backstop_default_BackstopJS_Homepage_0_document_0_phone.png\",\"label\":\"BackstopJS Homepage\",\"requireSameDimensions\":true,\"misMatchThreshold\":0.1,\"url\":\"https://garris.github.io/BackstopJS/\",\"referenceUrl\":\"\",\"expect\":0,\"viewportLabel\":\"phone\"}]}\n")
   });
 }
 
