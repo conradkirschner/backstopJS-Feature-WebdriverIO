@@ -348,7 +348,7 @@ exports.config = {
   after: function (result, capabilities, specs) {
     // Write results to json
     var fs = require('fs');
-    fs.writeFileSync('myjsonfile1.'+browser.backstopjs.runid+'.json', JSON.stringify(browser.backstopjs), 'utf8', function () {
+    fs.writeFileSync('myjsonfile1.'+browser.backstopjs.runid+'.json', JSON.stringify(browser), 'utf8', function () {
       console.log("saved testresults")
     });
 

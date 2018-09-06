@@ -169,27 +169,8 @@ function writeCompareConfigFile (comparePairsFileName, compareConfig) {
 function flatMapTestPairs (rawTestPairs) {
   return rawTestPairs.reduce((acc, result) => {
     var testPairs = result.testPairs;
-    if (!testPairs) {
-      testPairs = {
-        diff: {
-          isSameDimensions: '',
-          dimensionDifference: {
-            width: '',
-            height: ''
-          },
-          misMatchPercentage: ''
-        },
-        reference: '',
-        test: '',
-        selector: '',
-        fileName: '',
-        label: '',
-        scenario: result.scenario,
-        viewport: result.viewport,
-        msg: result.msg,
-        error: result.originalError && result.originalError.name
-      };
-    }
+        console.log(acc.concat(testPairs));
+
     return acc.concat(testPairs);
   }, []);
 }
@@ -203,6 +184,7 @@ module.exports = function (config, isReference) {
         console.log(JSON.stringify(rawTestPairs));
         console.log('###############dsfdsf------------------------');
         console.log(JSON.stringify(rawTestPairs));
+        rawTestPairs.runId = null;
        const result = {
           compareConfig: {
             testPairs: flatMapTestPairs(rawTestPairs)
