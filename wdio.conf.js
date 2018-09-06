@@ -138,7 +138,7 @@ exports.config = {
   jasmineNodeOpts: {
     //
     // Jasmine default timeout
-    defaultTimeoutInterval: 5000,
+    defaultTimeoutInterval: 50000,
     //
     // The Jasmine framework allows interception of each assertion in order to log the state of the application
     // or website depending on the result. For example, it is pretty handy to take a screenshot every time
@@ -202,11 +202,41 @@ exports.config = {
    * @param {Array.<String>} specs List of spec file paths that are to be run
    */
   before: function (capabilities, specs) {
+    //set viewport
+    browser.setViewportSize({
+      width: browser.options.viewport.width,
+      height: browser.options.viewport.height
+    });
     //todo add cookie loader if exist
     var viewport = JSON.parse(JSON.stringify(browser.options.viewport));
     console.log(JSON.stringify(browser.options));
     console.log("-------------");
+    if(browser.options.config.isReference) {
+      browser.backstopJSReferencePath = browser.options.config.paths.bitmaps_reference + '/' + browser.options.config.screenshotDateTime + '/' + browser.options.config.id + '_' + browser.options.scenarioLabelSafe + '_' + browser.options.viewport.vIndex + '_';
+    }else{
+      browser.backstopJSReferencePath = browser.options.config.paths.bitmaps_reference + '/' + browser.options.config.screenshotDateTime + '/' + browser.options.config.id + '_' + browser.options.scenarioLabelSafe + '_' + browser.options.viewport.vIndex + '_';
+      browser.backstopJSTestPath = browser.options.config.paths.bitmaps_test + '/' + browser.options.config.screenshotDateTime + '/' + browser.options.config.id + '_' + browser.options.scenarioLabelSafe + '_' + browser.options.viewport.vIndex + '_';
+    }
+    console.log(browser.backstopJSTestPath);
+    console.log(browser.backstopJSReferencePath);
+    browser.selectorIndex = 0;
+    browser.actionIndex = 0;
     //init backstopjs object
+
+    browser.testPair = {
+      "reference": "",
+      "test": "",
+      "selector": "te",
+      "fileName": "te",
+      "label": "te",
+      "requireSameDimensions": true,
+      "misMatchThreshold": 0.1,
+      "url": "et",
+      "referenceUrl": "te",
+      "expect": 0,
+      "viewportLabel": "te"
+    };
+    browser.testPairs =  [];
     browser.backstopjs = {
       "testPairs": [{
         "reference": "",
@@ -223,7 +253,6 @@ exports.config = {
       }],
       runid:browser.options.runId
     };
-
   },
   /**
    * Hook that gets executed before the suite starts
@@ -266,12 +295,29 @@ exports.config = {
    */
   afterCommand: function (commandName, args, result, error) {
     //TODO Add here function to execute screenshot
+    var ref_path = browser.backstopJSReferencePath + browser.options.scenario.selectors[browser.selectorIndex] + '_' + '_' + browser.selectorIndex + '_' + commandName + '_' + browser.actionIndex + '_' + browser.options.viewport.label + '.png';
+    var test_path =browser.backstopJSTestPath + browser.options.scenario.selectors[browser.selectorIndex] + '_' + '_' + browser.selectorIndex + '_' + commandName + '_' + browser.actionIndex + '_' + browser.options.viewport.label + '.png';
     switch (commandName) {
       case 'url':
-        browser.saveViewportScreenshot('tes123t.png');
+        console.log(JSON.stringify(browser.options));
+        if(browser.options.config.isReference) {
+          browser.saveViewportScreenshot(ref_path);
+          browser.actionIndex++;
+        }else{
+
+          browser.saveViewportScreenshot(test_path);
+          var c_testPair = JSON.parse(JSON.stringify(browser.testPair));
+          c_testPair.test =test_path;
+          c_testPair.reference =ref_path;
+          browser.testPairs.push(c_testPair);
+          browser.actionIndex++;
+        }
         break;
-      case 'CLICK':
-        browser.saveViewportScreenshot('tes123t.png');
+      case 'click':
+        console.log(JSON.stringify(browser.options));
+        browser.saveViewportScreenshot(browser.backstopJSReferencePath+browser.options.scenario.selectors[browser.selectorIndex ]+'_'+'_'+browser.selectorIndex +'_'+commandName+'_'+browser.actionIndex+'_'+browser.options.viewport.label+'.png');
+        browser.actionIndex++;
+
         break;
       case 'HOVER':
         browser.saveViewportScreenshot('tes123t.png');
